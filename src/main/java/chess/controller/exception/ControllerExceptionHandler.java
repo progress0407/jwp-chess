@@ -1,6 +1,7 @@
 package chess.controller.exception;
 
 import chess.controller.api.ChessApiController;
+import chess.controller.view.ChessViewController;
 import chess.exception.ClientException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = ChessApiController.class)
+@RestControllerAdvice(assignableTypes = {ChessApiController.class, ChessViewController.class})
 @Slf4j
 public class ControllerExceptionHandler {
 

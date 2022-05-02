@@ -1,15 +1,19 @@
 package chess.controller.view;
 
-import static chess.util.RandomCreationUtils.createUuid;
-
-import chess.domain.crypto.EncryptedRoom;
 import chess.service.ChessService;
-import javax.servlet.http.HttpSession;
+import chess.util.CryptoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
+
+import static chess.util.RandomCreationUtils.createUuid;
+import static chess.util.StringUtils.isEmpty;
 
 @Controller
 @RequiredArgsConstructor
@@ -17,8 +21,15 @@ public class ChessViewController {
 
     private final ChessService chessService;
 
+
+
     @GetMapping("/")
-    public String root() {
+    public String root(Model model, @RequestParam(required = false) Boolean isEmptyRoomInfo) {
+
+        if (isEmptyRoomInfo != null) {
+            model.addAttribute("isEmptyRoomInfo", isEmptyRoomInfo);
+        }
+
         return "index";
     }
 
@@ -27,27 +38,21 @@ public class ChessViewController {
         return "redirect:/";
     }
 
-/*
     @PostMapping("/games/first")
     public String playNewGame(@RequestParam("room-name") String roomName,
                               @RequestParam("room-password") String roomPassword,
-                              Model model) {
+                              Model model,
+                              RedirectAttributes redirectAttributes) {
+
+        if (isEmpty(roomName) || isEmpty(roomPassword)) {
+            redirectAttributes.addAttribute("isEmptyRoomInfo", true);
+            return "redirect:/";
+        }
 
         model.addAttribute("isNewGame", true);
         model.addAttribute("createdRoomId", createUuid());
-
-        return "game";
-    }
-*/
-
-    @PostMapping("/games/first")
-    public String playNewGame(EncryptedRoom encryptedRoom,
-                              Model model) {
-
-        model.addAttribute("isNewGame", true);
-        model.addAttribute("createdRoomId", createUuid());
-        model.addAttribute("roomName", encryptedRoom.getName());
-        model.addAttribute("encryptedRoomPassword", encryptedRoom.getEncryptedPassword());
+        model.addAttribute("roomName", roomName);
+        model.addAttribute("encryptedRoomPassword", CryptoUtils.encrypt(roomPassword));
 
         return "game";
     }
@@ -63,4 +68,6 @@ public class ChessViewController {
 
         return "game";
     }
+
+
 }

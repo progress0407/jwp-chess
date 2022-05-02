@@ -28,8 +28,10 @@ public class CryptoArgumentResolver implements HandlerMethodArgumentResolver {
         String roomName = request.getParameter("room-name");
         String roomPassword = request.getParameter("room-password");
 
+
         String encryptedRoomPassword = CryptoUtils.encrypt(roomPassword);
 
         return new EncryptedRoom(roomName, encryptedRoomPassword);
     }
+
 }

@@ -1,6 +1,12 @@
+const EMPTIES = ["", null, undefined];
+
 $(document).ready(function () {
   triggerEvents();
   loadRooms();
+
+  if (isEmptyRoomInfo()) {
+    alert("방 이름이나 비밀번호는 비어있을 수 없습니다 !");
+  }
 });
 
 function triggerEvents() {
@@ -9,8 +15,7 @@ function triggerEvents() {
   });
 
   $("button#first-game").click(function () {
-    debugger;
-    location.replace("/games/first");
+    createGame();
   });
 }
 
@@ -30,7 +35,6 @@ function loadRooms() {
   })
     .done(function (data) {
       for (let element of data.values) {
-        console.log(element);
         $("#room-list").append(`<tr id=${element.gameId}>`);
         $("#room-list tr")
           .last()
@@ -46,4 +50,23 @@ function loadRooms() {
       console.log(xhr);
       alert(xhr.responseText);
     });
+}
+
+let isEmpty = (text) => EMPTIES.includes(text);
+
+let createGame = () => {
+  debugger;
+  let roomName = $("#room-name").val().trim();
+  let roomPassword = $("#room-password").val().trim();
+
+  if (isEmpty(roomName) || isEmpty(roomPassword)) {
+    alert("빈 값을 입력할 수 없습니다 !");
+    return;
+  }
+
+  location.replace("/games/first");
+};
+
+function isEmptyRoomInfo() {
+  return JSON.parse($("#is-empty-room-info").val());
 }
